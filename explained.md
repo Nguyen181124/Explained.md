@@ -27,14 +27,13 @@ Xác thực truy cập cơ bản HTTP yêu cầu trình duyệt web cung cấp t
 
 Đây là cách nó thường hoạt động:
 
-<ol>
-<li>Máy khách gửi yêu cầu truy cập tài nguyên được bảo vệ trên máy chủ.</li>
-<li>Nếu máy khách chưa cung cấp bất kỳ thông tin xác thực nào, máy chủ sẽ phản hồi bằng mã trạng thái Không được phép 401 và bao gồm tiêu đề WWW-Authenticate: Basic để cho biết rằng nó yêu cầu xác thực cơ bản.</li>
-<li>Sau đó, khách hàng sẽ nhắc người dùng nhập tên người dùng và mật khẩu của họ, được kết hợp thành một chuỗi duy nhất ở định dạng tên người dùng: mật khẩu.</li>
-<li>Chuỗi kết hợp được mã hóa Base64 và được bao gồm trong tiêu đề "Ủy quyền: Cơ bản" trong yêu cầu tiếp theo tới máy chủ, ví dụ: Ủy quyền: Basic dXNlcm5hbWU6cGFzc3dvcmQ=.</li>
-<li>Khi nhận được yêu cầu, máy chủ sẽ giải mã thông tin xác thực được mã hóa Base64 và phân tách tên người dùng và mật khẩu. Sau đó, máy chủ sẽ kiểm tra thông tin xác thực được cung cấp dựa trên cơ sở dữ liệu người dùng hoặc dịch vụ xác thực của nó.</li>
-<li>Nếu thông tin đăng nhập khớp nhau, máy chủ sẽ cấp quyền truy cập vào tài nguyên được yêu cầu. Nếu không, máy chủ sẽ phản hồi bằng mã trạng thái Không được phép 401.</li>
-</ol>
+1. Máy khách gửi yêu cầu truy cập tài nguyên được bảo vệ trên máy chủ.
+1. Nếu máy khách chưa cung cấp bất kỳ thông tin xác thực nào, máy chủ sẽ phản hồi bằng mã trạng thái Không được phép 401 và bao gồm tiêu đề WWW-Authenticate: Basic để cho biết rằng nó yêu cầu xác thực cơ bản.
+1. Sau đó, khách hàng sẽ nhắc người dùng nhập tên người dùng và mật khẩu của họ, được kết hợp thành một chuỗi duy nhất ở định dạng tên người dùng: mật khẩu.
+1. Chuỗi kết hợp được mã hóa Base64 và được bao gồm trong tiêu đề "Ủy quyền: Cơ bản" trong yêu cầu tiếp theo tới máy chủ, ví dụ: Ủy quyền: Basic dXNlcm5hbWU6cGFzc3dvcmQ=.
+1. Khi nhận được yêu cầu, máy chủ sẽ giải mã thông tin xác thực được mã hóa Base64 và phân tách tên người dùng và mật khẩu. Sau đó, máy chủ sẽ kiểm tra thông tin xác thực được cung cấp dựa trên cơ sở dữ liệu người dùng hoặc dịch vụ xác thực của nó.
+1. Nếu thông tin đăng nhập khớp nhau, máy chủ sẽ cấp quyền truy cập vào tài nguyên được yêu cầu. Nếu không, máy chủ sẽ phản hồi bằng mã trạng thái Không được phép 401.
+
 Xác thực truy cập cơ bản HTTP có những hạn chế. Tên người dùng và mật khẩu, được mã hóa bằng Base64, có thể được giải mã dễ dàng. Hầu hết các trang web đều sử dụng TLS (Transport Layer Security) để mã hóa dữ liệu giữa trình duyệt và máy chủ, nâng cao tính bảo mật. Tuy nhiên, thông tin đăng nhập của người dùng vẫn có thể bị chặn hoặc bị tấn công bởi kẻ trung gian.
 
 Với Xác thực truy cập cơ bản HTTP, trình duyệt sẽ gửi tiêu đề Cấp phép cùng với thông tin xác thực cần thiết cho mỗi yêu cầu tới các tài nguyên được bảo vệ trong cùng một miền. Điều này mang lại trải nghiệm người dùng mượt mà hơn mà không cần phải nhập lại tên người dùng và mật khẩu. Tuy nhiên, vì mỗi trang web duy trì tên người dùng và mật khẩu riêng nên người dùng có thể khó nhớ thông tin đăng nhập của họ.
@@ -48,16 +47,16 @@ Xác thực cookie phiên giải quyết việc xác thực truy cập cơ bản
 
 Hãy xem nó hoạt động như thế nào:
 
-<ol>
-<li>Máy khách gửi yêu cầu truy cập tài nguyên được bảo vệ trên máy chủ. Nếu máy khách chưa được xác thực, máy chủ sẽ phản hồi bằng lời nhắc đăng nhập. Khách hàng gửi tên người dùng và mật khẩu của họ đến máy chủ.</li>
-<li>Máy chủ xác minh thông tin xác thực được cung cấp dựa trên cơ sở dữ liệu người dùng hoặc dịch vụ xác thực. Nếu thông tin đăng nhập khớp nhau, máy chủ sẽ tạo một ID phiên duy nhất và tạo phiên tương ứng trong bộ lưu trữ phía máy chủ (ví dụ: bộ nhớ máy chủ, cơ sở dữ liệu hoặc máy chủ phiên).</li>
-<li>Máy chủ gửi ID phiên tới máy khách dưới dạng cookie, thường có tiêu đề Set-Cookie.</li>
-<li>Máy khách lưu trữ cookie phiên.</li>
-<li>Đối với các yêu cầu tiếp theo, nó sẽ gửi cookie cùng với tiêu đề yêu cầu.</li>
-<li>Máy chủ kiểm tra ID phiên trong cookie dựa trên dữ liệu phiên được lưu trữ để xác thực người dùng.</li>
-<li>Nếu được xác thực, máy chủ sẽ cấp quyền truy cập vào tài nguyên được yêu cầu. Khi người dùng đăng xuất hoặc sau thời gian hết hạn được xác định trước, máy chủ sẽ vô hiệu hóa phiên và khách hàng sẽ xóa cookie phiên.</li>
-</ol>
+
+1. Máy khách gửi yêu cầu truy cập tài nguyên được bảo vệ trên máy chủ. Nếu máy khách chưa được xác thực, máy chủ sẽ phản hồi bằng lời nhắc đăng nhập. Khách hàng gửi tên người dùng và mật khẩu của họ đến máy chủ.
+1. Máy chủ xác minh thông tin xác thực được cung cấp dựa trên cơ sở dữ liệu người dùng hoặc dịch vụ xác thực. Nếu thông tin đăng nhập khớp nhau, máy chủ sẽ tạo một ID phiên duy nhất và tạo phiên tương ứng trong bộ lưu trữ phía máy chủ (ví dụ: bộ nhớ máy chủ, cơ sở dữ liệu hoặc máy chủ phiên).
+1. Máy chủ gửi ID phiên tới máy khách dưới dạng cookie, thường có tiêu đề Set-Cookie.
+1. Máy khách lưu trữ cookie phiên.
+1. Đối với các yêu cầu tiếp theo, nó sẽ gửi cookie cùng với tiêu đề yêu cầu.
+1. Máy chủ kiểm tra ID phiên trong cookie dựa trên dữ liệu phiên được lưu trữ để xác thực người dùng.
+1. Nếu được xác thực, máy chủ sẽ cấp quyền truy cập vào tài nguyên được yêu cầu. Khi người dùng đăng xuất hoặc sau thời gian hết hạn được xác định trước, máy chủ sẽ vô hiệu hóa phiên và khách hàng sẽ xóa cookie phiên.
+
 
 ![example](img/picture3.webp)
 
-link bìa dịch: https://blog.bytebytego.com/p/password-session-cookie-token-jwt?utm_source=%2Fsearch%2FPassword%252C%2520Session%252C%2520Cookie%252C%2520Token%252C%2520JWT%252C%2520SSO%252C%2520OAuth%2520-%2520Authentication%2520Explained%2520&utm_medium=reader2
+link bài dịch: https://blog.bytebytego.com/p/password-session-cookie-token-jwt?utm_source=%2Fsearch%2FPassword%252C%2520Session%252C%2520Cookie%252C%2520Token%252C%2520JWT%252C%2520SSO%252C%2520OAuth%2520-%2520Authentication%2520Explained%2520&utm_medium=reader2
